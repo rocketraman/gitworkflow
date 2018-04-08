@@ -283,9 +283,6 @@ Brush up on these commands and concepts:
 * git https://git-scm.com/blog/2010/03/08/rerere.html[rerere]
 * See also alias git mb ("merge branch") when working with remote branches
 
-The commands above may be used to semi-automate this process so that it can be run often -- once a day, or even as
-needed.
-
 ===== Tools
 
 TODO: Link to script to rebuild `pu` based on topics currently in `pu`

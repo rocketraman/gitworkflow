@@ -1,7 +1,8 @@
 = Gitworkflow
+:homepage: https://github.com/rocketraman/gitworkflows
 
 The https://git.kernel.org/pub/scm/git/git.git/[git.git] project, responsible for the creation and maintenance of the
-https://git-scm.com/[git] tool itself, uses an amazing workflow I call "gitworkflow", in deference to its creators
+https://git-scm.com/[git] tool itself, uses a powerful workflow I call "gitworkflow", in deference to its creators
 and the https://git-scm.com/docs/gitworkflows[man page] in which it is described.
 
 I describe the advantages of this workflow, in comparison to the popular
@@ -10,3 +11,100 @@ http://endoflineblog.com/oneflow-a-git-branching-model-and-workflow[OneFlow] in 
 https://hackernoon.com/how-the-creators-of-git-do-branches-e6fcc57270fb[How the Creators of Git do Branching].
 
 This repository is meant to be a place in which tools and documentation related to gitworkflow can be created.
+
+== TL;DR
+
+* See the link:./docs/concepts-summary.adoc[Concepts Summary]
+* See the link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
+
+== Key Advantages
+
+The key advantages gitworkflow over GitFlow and OneFlow all come from treating topics as first-class citizens, not just
+temporary placeholders for unfinished code.
+
+=== Amazing History
+
+Gitworkflow presents a history that code historians, and conscientious developers can love. It can easily present both
+summary (e.g. "show me all the topics merged into a release") and highly detailed views (e.g. "show me all the commits
+related to a topic").
+
+=== Continuous Integration, Done Right
+
+Ever struggled with the decision about when to merge a topic branch to the main branch (`develop` in GitFlow / `master`
+everywhere else)?
+
+With GitFlow and OneFlow, in order to get the benefit of
+https://martinfowler.com/articles/continuousIntegration.html[Continuous Integration], you have to either test each topic
+branch in isolation, OR you have to merge it to the main line. Testing the topic in isolation, well, tests in isolation,
+which is "continuous", but isn't "integration". Waiting to merge until the topic is "done" means you can only test it
+along with other work that is also "done". This is "integration", but it isn't "continuous". So neither approach gets
+us continuous integration.
+
+This tension exists between "continuous" and "integration" because in most non-trivial projects, topics don't have a
+binary done/not done state: they are almost always a work in progress, with their stability being an analog continuum,
+not a digital value. We really want to do "continuous integration" of topics, even before they are considered "done"
+(i.e. released).
+
+With gitworkflow, the stability level of a topic is explicit -- and we can do true "continuous integration" of all the
+unreleased alpha-quality topics merged together to create an "alpha" release, all the unreleased beta-quality topics
+merged to create a "beta" release, and lastly all of the released topics.
+
+The early "continuous integration" of topics before they are "done" allows identification of conflicting work on
+different topics early in their development, prompting the right conversations and coordination between devs at the
+right time.
+
+==== Make Your Topics Great
+
+Gitworkflow allows the alpha and beta-quality integration branches to be rewound and rebuild. This property allows
+topics to be massaged via interactive rebase until they form a series of easily understandable and reviewable chunks of
+work. With other flows, this is only an option until the topic is considered "done" and is merged to the main line for
+CI and user testing. Gitworkflow removes the limitation that a topic branch cannot be interactively rebased after it has
+been merged for CI and user testing, and generally for alpha-quality topics, this would be expected rather than frowned
+on.
+
+=== Flexibility
+
+Sometimes features take longer to develop than expected. Sometimes they don't work well with other work in progress and
+need to be thrown away and a new approach taken. Sometimes everyone thinks they are "done", but they don't test well or
+they cause regressions.
+
+In most flows, this code is already on the main line of development. It has to be reverted (which can be easy or hard
+depending on the flow and the method used to merge the topic).
+
+In contrast, Gitworkflow defines a range of stability levels that the code "graduates" through, from raw unfinished code
+("alpha") to code ready for testing ("beta") to code ready for release. Code can spend as much time as it needs to at
+each of these "levels", and when code is merged to the main line, it is production-ready. Thus gitworkflow supports
+continuous deployment scenarios as well.
+
+Gitworkflow allows you to define your own stability levels if you wish: add or remove integration branches as necessary.
+
+== Main Insights
+
+One key insight that makes gitworkflow work over flows like GitFlow and OneFlow is that: git is smarter than your
+average source control system. Topics don't have to be merged _only into the branch they were started from_, which seems
+to be the implicit or explicit assumption most flow authors make. In git, the topic can be merged _into any branch that
+it shares a common ancestor with_.
+
+This means that topic branches can be merged to multiple integration branches, each with a different purpose
+corresponding to the stability levels defined above.
+
+A second key insight is that, when topics are first-class citizens, early integration branches are just ephemeral
+placeholders for various combinations of topics, and can easily be recreated (rewind and rebuild). The integration
+branches are therefore unimportant and don't need to be a limiting factor for work on topics, such as rebasing, and
+we are free to experiment with moving topics in and out of them.
+
+== Disadvantages
+
+Gitworkfow is more complicated, and harder to understand than most (probably all) other flows. It requires more
+understanding of git concepts and capabilities. It offers significant powerful capabilities to complex multi-dimensional
+products with a team of developers, but does have more "overhead" in the sense of multiple things to track and
+understand. This means that:
+
+* Gitworkflow should not be used without significant team maturity using, or willingness to learn, git, and
+* Gitworkflow is serious overkill for trivial or one-man projects (but these might be a good place to try it out).
+
+== Interested in Learning More?
+
+* Read the https://hackernoon.com/how-the-creators-of-git-do-branches-e6fcc57270fb[blog post]
+* See the link:./docs/concepts-summary.adoc[Concepts Summary]
+* See the link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]

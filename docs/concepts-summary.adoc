@@ -75,11 +75,11 @@ and it has the following properties:
 issues
 * usually deployed to a testing environment
 at the beginning of every development cycle, rewound to `master`, but otherwise never rewound
-* contains all of `master` i.e. always based on the head of `master`
+* usually contains all of `master` i.e. usually based on the head of `master`
 * when a release is made, if a topic branch currently in `next` is not stable enough promotion to `master`, it is
 simply not merged to `master` -- instead, it is merged to the next iteration of `next`
-* may be rewound to `master` at any time -- but usually after a release
-* it is *never* merged into another branch
+* may be rewound to `master` at any time, and rebuilt with topics still in `next` -- but usually after a release
+* it is *never* merged into any another branch
 * new topics are not usually based on `next`
 ** one exception: if a topic is not expected to be stable for the next release, and the creator understands that
 the branch will need to be rebased when `next` is rewound and rebuilt, this is ok and may result in fewer conflicts
@@ -96,7 +96,7 @@ and it has the following properties:
 * to test / provide early warning whether the unmerged topic branches integrate cleanly -- if not, some communication
 to coordinate changes on topics is necessary
 * may be rewound to `master` at any time -- but usually once every day or every second day
-* it is *never* merged into another branch
+* it is *never* merged into any another branch
 * new topics are not usually based on `pu`
 
 ==== maint (and maint-X.Y)
