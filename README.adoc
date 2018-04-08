@@ -28,6 +28,16 @@ Gitworkflow presents a history that code historians, and conscientious developer
 summary (e.g. "show me all the topics merged into a release") and highly detailed views (e.g. "show me all the commits
 related to a topic").
 
+A graph of a specific topic's history contains all of that topics commits, not interspersed with other topics:
+
+image:docs/images/topichistory.png[Topic History]
+
+but all of that detail can be elided to understand what was merged at a high level:
+
+image:docs/images/integrationhistory.png[Integration History]
+
+(both examples from the git.git repository)
+
 === Continuous Integration, Done Right
 
 Ever struggled with the decision about when to merge a topic branch to the main branch (`develop` in GitFlow / `master`
@@ -88,10 +98,17 @@ it shares a common ancestor with_.
 This means that topic branches can be merged to multiple integration branches, each with a different purpose
 corresponding to the stability levels defined above.
 
+A related insight is that topics can be merged into other topics to explicitly deal with conflicts and encode
+dependencies.
+
 A second key insight is that, when topics are first-class citizens, early integration branches are just ephemeral
 placeholders for various combinations of topics, and can easily be recreated (rewind and rebuild). The integration
 branches are therefore unimportant and don't need to be a limiting factor for work on topics, such as rebasing, and
 we are free to experiment with moving topics in and out of them.
+
+The third key insight is that merge commits -- the ability to explicitly join two lines of development -- offer the
+ability to accomplish all of the above, as well as to continue to track topic history, long after the topic is no longer
+being developed, making code history spelunking great.
 
 == Disadvantages
 
@@ -105,6 +122,23 @@ understand. This means that:
 
 == Interested in Learning More?
 
-* Read the https://hackernoon.com/how-the-creators-of-git-do-branches-e6fcc57270fb[blog post]
+=== Documentation
+
 * See the link:./docs/concepts-summary.adoc[Concepts Summary]
 * See the link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
+
+=== The Gitworfkow Awesome List
+
+A curated list of related external articles and documentation.
+
+==== Git.git Documentation
+
+All of the following are git.git resources by the git.git team.
+
+* "Managing Branches" in man page https://git-scm.com/docs/gitworkflows[gitworkflows(7)]
+* "How various branches are used" in git.git https://github.com/git/git/blob/efc912b23335434674bcfda8199077f8dfa5d6f0/MaintNotes#L144[MaintNotes]
+* "The Policy" in git.git https://github.com/git/git/blob/v2.13.0/Documentation/howto/maintain-git.txt#L35[maintain-git.txt]
+
+==== Articles and Blog Posts
+
+* https://hackernoon.com/how-the-creators-of-git-do-branches-e6fcc57270fb[How the Creators of Git do Branching] by Raman Gupta
