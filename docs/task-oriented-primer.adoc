@@ -187,7 +187,14 @@ TODO
 
 ===== Visualization
 
-TODO
+In the following, `0.1` is the current release. Two separate features, developed by Bob, called `bob/feature-1` and
+`bob/feature-2` were initially merged into `next`. When `bob/feature-1` was merged, release `0.2-beta-1` was created.
+After `bob/feature-2` was merged, release `0.2-beta-2` was created. Lastly, both of these topics graduated, and were
+merged to `master` for release as `0.2`.
+
+image:images/topicgraduation.png[Topic Graduation to Master]
+
+(https://codepen.io/rocketraman/pen/mxayJw[https://codepen.io/rocketraman/pen/mxayJw])
 
 ==== Create a Release
 
