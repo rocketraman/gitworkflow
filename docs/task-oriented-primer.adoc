@@ -1,0 +1,299 @@
+= Gitworkflow: A Task-Oriented Primer
+:toc: macro
+:toclevels: 3
+
+toc::[]
+
+== Introduction
+
+An earlier article described https://hackernoon.com/how-the-creators-of-git-do-branches-e6fcc57270fb[Gitworkflow]. This
+document goes into more details, focusing on a task-oriented visual presentation to make using gitworkflow as simple as
+possible.
+
+== Concepts
+
+See link:./concepts-summary.adoc[Concepts Summary]
+
+== Tasks
+
+All of the below summaries given using the git command line. Learn it!
+
+=== Developers
+
+==== Creating and Developing a Topic
+
+Topics are usually created by branching from `master`. Sometimes, from `maint`.
+
+*Question*: Is this topic eventually going to be merged to the existing release?
+
+* If *yes*, then branch from `master`
+* If *no*, then branch from `maint`
+
+WARNING: Never commit directly to `next` or `pu` without a topic branch -- these changes will be lost.
+
+Brush up on these commands and concepts:
+
+* git https://git-scm.com/docs/git-checkout[checkout] -b
+* git https://git-scm.com/docs/git-commit[commit]
+* git https://git-scm.com/docs/git-rebase[rebase] -i
+* git https://git-scm.com/docs/git-push[push]
+
+===== Examples
+
+Create a new topic branch from `master` (see the link:./concepts-summary.adoc[Concepts Summary] for a good naming
+convention):
+
+ (master) $ git checkout -b topic-branch
+
+Switched to a new branch 'topic-branch'
+
+ (topic-branch) $
+
+Now develop your topic, committing as you go. Write good commit messages. Use git rebase to make an easily reviewable
+series of commits.
+
+Once your branch is ready for a review (or simply to back it up), push it to the server:
+
+ (topic-branch) $ git push --set-upstream origin topic-branch
+
+You can continue to work on this branch, and use git push to make your changes visible for code review.
+
+If you have long-running development of a feature, you will probably fall behind the `master` branch. If your branch has
+not been merged to another branch (e.g., `next`) yet, you can rebase/replay your changes on top of the latest `master`
+using
+
+ (topic-branch) $ git rebase master
+
+You can continue to interactively rebase a topic to make an easily reviewable series of commits until your branch has
+been merged to `next`. After that, generally only push new commits to your branch (you can still rebase new commits
+locally before pushing to the remote).
+
+ (topic-branch) $ git rebase -i master
+
+===== Visualization
+
+Result of branching from `master` and committing twice:
+
+image:images/creating-a-topic.png[image]
+
+(https://codepen.io/rocketraman/pen/VbdOXd[https://codepen.io/rocketraman/pen/VbdOXd])
+
+==== Depending on Another Topic
+
+Oh oh, you need to develop some work that depends on another topic that has not yet been merged to `master`. Do not
+base your work on `next`. Instead, create your topic and merge the other topic into it. This explicitly records the
+dependency relationship between the topics, and puts the commit resolutions (if any) on the right branch.
+
+Brush up on these commands and concepts:
+
+* git https://git-scm.com/docs/git-merge[merge] --no-ff
+
+===== Examples
+
+Branch `my-topic` depends on `frob-topic`
+
+ (my-topic) $ git merge --no-ff frob-topic
+
+===== Visualization
+
+TODO
+
+=== Release Managers
+
+The following tasks are useful to understand for everyone, but especially people who take on the role of release
+managers (releasing to testing and prod environments).
+
+[[TopicStabilizationMergeToPu]]
+==== Topic Stabilization on Proposed
+
+A topic is stabilized by first merging into `pu` (or "proposed updates"). The topic may be very raw and will probably
+cause regressions or have other problems in its current state. Merging to `pu` provides opportunity for early feedback
+on these problems, and also identifies topics that are conflicting so that the relevant devs can communicate and
+determine a strategy.
+
+Brush up on these commands and concepts:
+
+* git https://git-scm.com/docs/git-merge[merge] --no-ff <topic>
+* git https://git-scm.com/docs/git-revert[revert] -m 1 <merge-commit>
+
+Topics merged to `pu` can still be interactively rebased. Therefore `pu` can always be rewound to `master` (or to just
+before the rebased topic was merged), and everything from that point forward merged again ("rewind and rebuild").
+Alternatively, the existing topic merge(s) can be reverted, and then the rebased topic merged again.
+
+NOTE: When pushing `pu` back to the server, if there is a conflict because someone else pushed a change to `pu` at
+the same time, do not do a merge pull. Instead, fetch `pu`, reset-hard to `origin/pu`, and then merge the topic
+branch again. This keeps the history of the integration branch when viewed with `--first-parent` clean.
+
+===== Examples
+
+```
+$ git checkout pu
+(pu) $ git merge --no-ff topic-branch
+```
+
+===== Visualization
+
+Result of merging `ai/foo-1` and `ai/bar-1` into `pu`:
+
+image:images/merge-to-pu.png[image]
+
+(https://codepen.io/rocketraman/pen/oWyRmM[https://codepen.io/rocketraman/pen/oWyRmM])
+
+==== Topic Graduation to Next
+
+A topic will generally be merged to `next` once technical and code reviews are complete, and perhaps some initial
+testing via `pu` has been done. The topic may cause regressions or have other issues that may still need to be solved.
+This generally represents all the development that is “done”, but will likely require more stabilization to fix
+regressions or other issues based on user testing in a UAT environment.
+
+A topic will spend as much time on `next` as necessary to stabilize the topic code.
+
+From this point forward, the topic is generally not rebased -- only new commits are pushed to it, and merged to `next`
+as necessary. However, this is not a hard-and-fast rule (see <<TopicStabilizationMergeToPu>> for techniques to deal
+with a rebased topic branch previously merged).
+
+See <<TopicStabilizationMergeToPu>> for the commands and concepts used.
+
+NOTE: When pushing `next` back to the server, if there is a conflict because someone else pushed a change to `next` at
+the same time, do not do a merge pull. Instead, fetch `next`, reset-hard to `origin/next`, and then merge the topic
+branch again. This keeps the history of the integration branch when viewed with `--first-parent` clean.
+
+===== Tools
+
+TODO: Link to script to rebuild `next` based on topics currently in `next`
+
+===== Examples
+
+```
+$ git checkout next
+(next) $ git merge --no-ff topic-branch
+```
+
+===== Visualization
+
+TODO
+
+==== Topic Graduation to Master
+
+We expect to merge a topic to `master` as soon as that topic is considered stable via testing on `next`.
+
+Not every commit on `master` (topic merges) need to form a “release”. In addition, even commits to `master` that *do*
+form a release are not necessarily deployed to production. The `master` branch does represent our latest “best” code,
+and will generally be run in production environments.
+
+===== Examples
+
+TODO
+
+===== Visualization
+
+TODO
+
+==== Create a Release
+
+Verify that `maint` contains no commits that are also not present in `master`:
+
+ $ git log master..maint
+
+should return nothing. If it returns one or more commits, merge `maint` into `master` to preserve any maintenance
+changes in future releases.
+
+```
+$ git checkout master
+(master) $ git merge maint
+```
+
+Tag the latest (or a specific) version on `master` as a “release”.
+
+```
+$ git checkout master
+(master) $ git tag -a “v2.7.0” v2.7.0
+```
+
+Copy the existing maintenance branch:
+
+```
+$ git checkout `maint`
+(maint) $ git branch maint-2.6.4
+```
+
+Make a new maintenance branch:
+
+```
+$ git checkout maint
+(maint) $ git reset --hard v2.7.0
+(maint) $ git push --set-upstream origin +maint
+```
+
+You will likely now wish to <<RewindRebuildNext>> and <<RewindRebuildPu>>.
+
+===== Examples
+
+TODO
+
+===== Visualization
+
+TODO
+
+[[RewindRebuildNext]]
+==== Rewind and Rebuild next
+
+`next` may be rewound and rebuilt from `master` as often as needed. This will normally happen after a release.
+
+Brush up on these commands and concepts:
+
+* git https://git-scm.com/docs/git-reset[reset] --hard master
+* git https://git-scm.com/docs/git-merge[merge] --no-ff
+* git https://git-scm.com/blog/2010/03/08/rerere.html[rerere]
+* See also alias git mb ("merge branch") when working with remote branches
+
+The commands above may be used to semi-automate this process so that it can be run often -- once a day, or even as
+needed.
+
+A rebuild of `pu` might be needed if one or more topics have been rebased. This is relatively easy to semi-automate but
+some open source tooling would be useful.
+
+===== Tools
+
+TODO: Link to script to rebuild `pu` based on topics currently in `pu`
+
+===== Examples
+
+TODO
+
+===== Visualization
+
+TODO
+
+[[RewindRebuildPu]]
+==== Rewind and Rebuild pu
+
+`pu` may be rewound and rebuilt from `master` as often as needed. This will normally happen after a release.
+
+A rebuild of `pu` might also be needed if one or more topics have been rebased. This is relatively easy to semi-automate
+but some open source tooling would be useful.
+
+TIP: A CI system may be configured to do this on an hourly or daily basis, automatically rewinding `pu` and merging in
+all pending topics, building, and testing the result. This is a great way to catch conflicts between topics early.
+
+Brush up on these commands and concepts:
+
+* git https://git-scm.com/docs/git-reset[reset] --hard master
+* git https://git-scm.com/docs/git-merge[merge] --no-ff
+* git https://git-scm.com/blog/2010/03/08/rerere.html[rerere]
+* See also alias git mb ("merge branch") when working with remote branches
+
+The commands above may be used to semi-automate this process so that it can be run often -- once a day, or even as
+needed.
+
+===== Tools
+
+TODO: Link to script to rebuild `pu` based on topics currently in `pu`
+
+===== Examples
+
+TODO
+
+===== Visualization
+
+TODO

@@ -1,0 +1,122 @@
+= Gitworkflow: Concepts Summary
+:toc: macro
+
+toc::[]
+
+== Introduction
+
+An earlier article described https://hackernoon.com/how-the-creators-of-git-do-branches-e6fcc57270fb[Gitworkflow]. This
+document expands on some of the concepts in a shorter, more digestible form.
+
+== Concepts
+
+=== Topic Branches
+
+Topic branches, sometimes called feature branches, are where almost all development happens. Topics represent something
+being worked on, almost always in a branch, like a bug fix, hot fix, or new functionality.
+
+Name topic branches according to some convention. A good one is your initials, a slash, the issue tracker ID, a dash,
+and a (very) brief description in camel-case e.g.:
+
+rg/SP-1234-NewFrobnik
+
+The initials ease communication by immediately identifying the owner. The issue and description are short but also
+provide useful context.
+
+By branching from `maint` or `master`, we have the flexibility to merge the topic into branches like `next` or `pu`
+because those branches will share the branch point as a common ancestor).
+
+If topic B depends on another topic A that has not yet graduated to `master`, topic A may be merged into topic B. This
+complicates interactive branch rebases so this should be avoided when possible, however if necessary, git should handle
+this situation without too much problem.
+
+Smaller bugfixes and features may be merged directly into `maint` or `master` without going through a stabilization
+period in `next` or `pu`. Changes on `maint` are merged upwards into `master`, and changes on `master` are merged
+upwards into `next` and `proposed` (though these branches are more often simply rewound and rebuilt).
+
+=== Integration Branches
+
+The integration branches are described here.
+
+Stable releases are cut from `master`, beta or acceptance test releases from `next`, and alpha or preview releases from
+`pu`. `maint` simply represents fixes to the previous release. The most stable up-to-date code is on `master`.
+
+Integration branches are exactly like any other branch in git. What makes them “special” is solely in how we have
+defined their use.
+
+==== master
+
+The `master` branch is:
+
+* the code that is most up-to-date and stable
+
+and it has the following properties:
+
+* when creating a named new release, it would come from `master`
+* in a continuous deployment scenario, production would always run the tip of `master`
+* usually deployed to production, released to users
+* at some point, the tip of `master` is tagged with vX.Y.0
+* the `maint` branch is always based on some commit on `master`
+* never rewound or rebased, *always safe to base topics on*
+** you may want to add a check in your git server to ensure force push does not happen on this branch
+* new topics are almost always based on `master`
+* usually contains all of `maint` (and must before a new release, since otherwise there are changes currently in prod
+that won’t be included in the new release)
+
+==== next
+
+The `next` branch is:
+
+* the code currently being developed and stabilized for release
+
+and it has the following properties:
+
+* code merged to `next` is generally in fairly good shape, though perhaps there are regressions or other non-obvious
+issues
+* usually deployed to a testing environment
+at the beginning of every development cycle, rewound to `master`, but otherwise never rewound
+* contains all of `master` i.e. always based on the head of `master`
+* when a release is made, if a topic branch currently in `next` is not stable enough promotion to `master`, it is
+simply not merged to `master` -- instead, it is merged to the next iteration of `next`
+* may be rewound to `master` at any time -- but usually after a release
+* it is *never* merged into another branch
+* new topics are not usually based on `next`
+** one exception: if a topic is not expected to be stable for the next release, and the creator understands that
+the branch will need to be rebased when `next` is rewound and rebuilt, this is ok and may result in fewer conflicts
+during future rebase than if the topic started from `master`
+
+==== pu
+
+The `pu` branch is:
+* “proposed” updates for temporary analysis, experimentation, or initial testing/review of one or more features
+** anything else that doesn’t yet belong in `next`
+
+and it has the following properties:
+
+* to test / provide early warning whether the unmerged topic branches integrate cleanly -- if not, some communication
+to coordinate changes on topics is necessary
+* may be rewound to `master` at any time -- but usually once every day or every second day
+* it is *never* merged into another branch
+* new topics are not usually based on `pu`
+
+==== maint (and maint-X.Y)
+
+The `maint` branch is:
+
+* code that is the newest maintained production release
+
+The `maint-X.Y` branches are:
+
+* code that are older, but still maintained, production releases
+
+and they have the following properties:
+
+* usually deployed directly into production, perhaps with some but not extensive testing elsewhere
+* after release of `vX.Y.0` is made, `maint` is set to that commit
+* releases of `vX.Y.n` are made from `maint` if `X.Y` is current, or `maint-X.Y` if `X.Y` is an older maintained release
+* never rewound or rebased, *always safe to base topics on*
+** you may want to add a check in your git server to ensure force push does not happen on this branch, with an exception
+for when the `maint` branch is moved to the new tip of `master` after a release
+* hotfix topics are merged to `maint` directly
+* new topics may be based on `maint` (or `maint-X.Y`) if the fix in the topic needs to be applied to that older release
+* can be merged to `master` to propagate fixes forward
