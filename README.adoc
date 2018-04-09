@@ -127,6 +127,11 @@ understand. This means that:
 * See the link:./docs/concepts-summary.adoc[Concepts Summary]
 * See the link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
 
+=== Questions?
+
+Feel free to ask questions about gitworkflow in the https://github.com/rocketraman/gitworkflow/issues[issues] of this
+repository. Please prefix your issue subject with `[Q]`.
+
 === The Gitworfkow Awesome List
 
 A curated list of related external articles and documentation.
