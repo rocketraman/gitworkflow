@@ -147,3 +147,10 @@ All of the following are git.git resources by the git.git team.
 ==== Articles and Blog Posts
 
 * https://hackernoon.com/how-the-creators-of-git-do-branches-e6fcc57270fb[How the Creators of Git do Branching] by Raman Gupta
+
+== TODOs
+
+* Document useful commands with gitworkflow e.g. history spelunking, topic status, etc.
+** Integrate and document aliases in https://gist.github.com/rocketraman/1fdc93feb30aa00f6f3a9d7d732102a9
+* Add more detail to link:./docs/concepts-summary.adoc[Concepts Summary]
+* Lots of work in link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
