@@ -48,8 +48,7 @@ With GitFlow and OneFlow, in order to get the benefit of
 https://martinfowler.com/articles/continuousIntegration.html[Continuous Integration], you have to either test each topic
 branch in isolation, OR you have to merge it to the main line. Testing the topic in isolation, well, tests in isolation,
 which is "continuous", but isn't "integration". Waiting to merge until the topic is "done" means you can only test it
-along with other work that is also "done". This is "integration", but it isn't "continuous". So neither approach gets
-us continuous integration.
+along with other work that is also "done". This is "integration", but it isn't "continuous".
 
 This tension exists between "continuous" and "integration" because in most non-trivial projects, topics don't have a
 binary done/not done state: they are almost always a work in progress, with their stability being an analog continuum,
@@ -70,8 +69,8 @@ Gitworkflow allows the alpha and beta-quality integration branches to be rewound
 topics to be massaged via interactive rebase until they form a series of easily understandable and reviewable chunks of
 work. With other flows, this is only an option until the topic is considered "done" and is merged to the main line for
 CI and user testing. Gitworkflow removes the limitation that a topic branch cannot be interactively rebased after it has
-been merged for CI and user testing, and generally for alpha-quality topics, this would be expected rather than frowned
-on.
+been merged for CI and user testing, and especially for alpha-quality topics, this would be expected by most team leads
+and code reviewers, rather than frowned on.
 
 === Flexibility
 
@@ -125,9 +124,9 @@ understand. This means that:
 
 === Documentation
 
-* See the link:./docs/concepts-summary.adoc[Concepts Summary]
-* See the link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
-* See the link:./docs/useful-commands.adoc[Useful Commands]
+* link:./docs/concepts-summary.adoc[Concepts Summary]
+* link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
+* link:./docs/useful-commands.adoc[Useful Commands]
 
 === Questions?
 
