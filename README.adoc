@@ -14,8 +14,9 @@ This repository is meant to be a place in which tools and documentation related 
 
 == TL;DR
 
-* See the link:./docs/concepts-summary.adoc[Concepts Summary]
-* See the link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
+* link:./docs/concepts-summary.adoc[Concepts Summary]
+* link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
+* link:./docs/useful-commands.adoc[Useful Commands]
 
 == Key Advantages
 
@@ -126,6 +127,7 @@ understand. This means that:
 
 * See the link:./docs/concepts-summary.adoc[Concepts Summary]
 * See the link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
+* See the link:./docs/useful-commands.adoc[Useful Commands]
 
 === Questions?
 
@@ -154,3 +156,4 @@ All of the following are git.git resources by the git.git team.
 ** Integrate and document aliases in https://gist.github.com/rocketraman/1fdc93feb30aa00f6f3a9d7d732102a9
 * Add more detail to link:./docs/concepts-summary.adoc[Concepts Summary]
 * Lots of work in link:./docs/task-oriented-primer.adoc[Task-Oriented Primer]
+* Lots of work in link:./docs/useful-commands.adoc[Useful Commands]
