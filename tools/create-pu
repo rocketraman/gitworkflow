@@ -1,0 +1,68 @@
+#!/bin/sh
+#
+# Copyright (C) 2017,2018 Jens Sauer
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Usage: create-pu
+#
+# Simple script which merges all branches which are in 'next' but not in
+# 'master' and additonally all branches which are not in 'next' and not
+# in 'master'.
+# Branches labled with: 'wip/XYZ' are not automatically merged into 'pu'.
+#
+# When an merge conflict occures, 'create-pu' will exit. You have to fix the
+# conflict, git-rerere will help to reuse the resolution. Then restart the
+# creation of 'pu' by resetting 'pu' to 'master' and run 'create-pu' again.
+#
+# To recreate 'pu' from 'master' run 'git reset --hard master' on 'pu' before
+# running this script.
+#
+
+git checkout -q pu
+
+branchlist=`git branch --merged next | sed 's/^..//;s/ .*//' | \
+		xargs git branch --no-merged pu | sed 's/^..//;/^next/d'`
+echo "Merge topic branches in 'next' into 'pu'"
+for branch in $branchlist
+do
+	echo "Merge '$branch'"
+	git merge --no-stat --no-ff --log --no-edit $branch
+	if [ -e .git/MERGE_HEAD ]
+	then
+		exit
+	fi
+done
+
+pu_nomerged=`git branch --no-merged pu | sed 's/^..//;s/ .*//;/^wip/d;/^next/d'`
+next_nomerged=`git branch --no-merged next | \
+	sed 's/^..//;s/ .*//;/^wip/d;/^pu/d'`
+if [ "$next_nomerged" = "$pu_nomerged" ]
+then
+	git commit --allow-empty -m "### Match 'next'"
+fi
+
+branchlist=`git branch --no-merged next | sed 's/^..//;s/ .*//' | \
+		xargs git branch --no-merged pu | \
+		sed 's/^..//;/^next/d;/^wip/d'`
+echo "Merge topic branches not in 'next' into 'pu'"
+for branch in $branchlist
+do
+	echo "Merge '$branch'"
+	git merge --no-stat --no-ff --log --no-edit $branch
+	if [ -e .git/MERGE_HEAD ]
+	then
+		exit
+	fi
+done
