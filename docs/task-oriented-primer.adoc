@@ -224,12 +224,12 @@ $ git checkout `maint`
 (maint) $ git branch maint-2.6.4
 ```
 
-Make a new maintenance branch:
+Update the current maintenance branch:
 
 ```
 $ git checkout maint
 (maint) $ git merge --ff-only master
-(maint) $ git push --set-upstream origin +maint
+(maint) $ git push origin maint
 ```
 
 NOTE: If the merge fails because the branch cannot be fast-forwarded, then it is possible some fixes on `maint` were
