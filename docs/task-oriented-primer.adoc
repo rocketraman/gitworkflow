@@ -228,9 +228,13 @@ Make a new maintenance branch:
 
 ```
 $ git checkout maint
-(maint) $ git reset --hard v2.7.0
+(maint) $ git merge --ff-only master
 (maint) $ git push --set-upstream origin +maint
 ```
+
+NOTE: If the merge fails because the branch cannot be fast-forwarded, then it is possible some fixes on `maint` were
+missed in the feature release, and are not on `master`. This will not happen if the content of the branches was
+verified as per the earlier instructions.
 
 You will likely now wish to <<RewindRebuildNext>> and <<RewindRebuildPu>>.
 
