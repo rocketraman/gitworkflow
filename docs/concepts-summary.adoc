@@ -120,3 +120,30 @@ for when the `maint` branch is moved to the new tip of `master` after a release
 * hotfix topics are merged to `maint` directly
 * new topics may be based on `maint` (or `maint-X.Y`) if the fix in the topic needs to be applied to that older release
 * can be merged to `master` to propagate fixes forward
+
+== The Life of a Topic Branch in Gitworkflow
+
+Development on a topic branch might go something like the following. There are a lot of variations on this basic
+structure -- this is just an example.
+
+The following includes topic rebasing to produce a clean series of commits. However, this is not required by
+gitworkflow -- just enabled by it.
+
+. Create a topic branch starting from master
+. commit - commit - commit
+. Push to a remote branch as necessary to back up the work or facilitate discussions with colleagues
+. `merge --no-ff` topic to the `pu` integration branch (manually or scripted and scheduled)
+.. check for conflicts and do initial review/testing of `pu` build
+. Cleanup topic history with an interactive rebase
+. Force push to origin topic branch
+. `merge --no-ff` topic to a rebuilt `pu` integration branch (manually or scripted and scheduled)
+. Code review
+. Fix code review comments in separate commits
+.. Don't rebase to simplify work of reviewer's so they know what you have changed, but use `--squash` and `--fixup`
+liberally
+. After review is completed, interactively rebase the squash and fixup commits to cleanup the topic history
+.. Use `--autosquash` to apply the fixup/squash commits
+. `merge --no-ff` to the `next` integration branch
+. Test, validate and change the topic as necessary
+. Merge topic branch to `master` (when release done), tag `master` with release version
+. Remove the topic branch locally and remotely
