@@ -8,7 +8,7 @@ and the https://git-scm.com/docs/gitworkflows[man page] in which it is described
 I describe the advantages of this workflow, in comparison to the popular
 http://nvie.com/posts/a-successful-git-branching-model/[GitFlow] by Vincent Drieesen and Adam Ruka's
 http://endoflineblog.com/oneflow-a-git-branching-model-and-workflow[OneFlow] in a blog post titled
-https://hackernoon.com/how-the-creators-of-git-do-branches-e6fcc57270fb[How the Creators of Git do Branching].
+https://medium.com/hackernoon/how-the-creators-of-git-do-branches-e6fcc57270fb[How the Creators of Git do Branching].
 
 This repository is meant to be a place in which tools and documentation related to gitworkflow can be created.
 
